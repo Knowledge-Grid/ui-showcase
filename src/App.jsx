@@ -8,6 +8,7 @@ import HumanInTheLoop from './pages/HumanInTheLoop'
 import DimensionalAnomalies from './pages/DimensionalAnomalies'
 import AgentAnalyticsV2 from './pages/AgentAnalyticsV2'
 import LLMObservability from './pages/LLMObservability'
+import LeftNavVariations from './pages/LeftNavVariations'
 
 // Register your designs here - just add new entries as you create them
 const designs = [
@@ -46,6 +47,12 @@ const designs = [
     name: 'LLM Observability',
     description: 'Monitor AI pipelines with trace exploration, session tracking, and detailed observation trees',
     component: LLMObservability,
+  },
+  {
+    path: '/navigation-variants',
+    name: 'Navigation Variants',
+    description: 'Interactive navigation patterns: two-panel, multi-expand, accordion, and dropdown styles',
+    component: LeftNavVariations,
   },
   // Add more designs like this:
   // {
