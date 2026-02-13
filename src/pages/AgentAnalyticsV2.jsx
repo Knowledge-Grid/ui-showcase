@@ -1,19 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { MoreVertical } from 'lucide-react';
 
 const AgentAnalyticsV2 = () => {
   const [activeSection, setActiveSection] = useState('overview');
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedAgentForCosts, setSelectedAgentForCosts] = useState(null);
-  const [showConfigureModal, setShowConfigureModal] = useState(false);
   const [selectedAgentForConfig, setSelectedAgentForConfig] = useState(null);
+  const [openDropdownAgentId, setOpenDropdownAgentId] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
+  const [showAgentSettingsModal, setShowAgentSettingsModal] = useState(false);
+  const [showApiKeysModal, setShowApiKeysModal] = useState(false);
+  const [showAgentTagsModal, setShowAgentTagsModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [showTraceDetailModal, setShowTraceDetailModal] = useState(false);
   const [selectedTrace, setSelectedTrace] = useState(null);
   const [showTagManagementModal, setShowTagManagementModal] = useState(false);
   const [selectedTagFilter, setSelectedTagFilter] = useState('all');
+  const [showGenerateKeyForm, setShowGenerateKeyForm] = useState(false);
   const [currentTracePage, setCurrentTracePage] = useState(1);
   const [currentAgentPage, setCurrentAgentPage] = useState(1);
   const tracesPerPage = 10;
   const agentsPerPage = 10;
+
+  // Close dropdown on scroll or resize since it uses fixed positioning
+  useEffect(() => {
+    if (!openDropdownAgentId) return;
+    const handleClose = () => setOpenDropdownAgentId(null);
+    window.addEventListener('scroll', handleClose, true);
+    window.addEventListener('resize', handleClose);
+    return () => {
+      window.removeEventListener('scroll', handleClose, true);
+      window.removeEventListener('resize', handleClose);
+    };
+  }, [openDropdownAgentId]);
 
   // Tag Categories
   const tagCategories = [
@@ -53,12 +72,17 @@ const AgentAnalyticsV2 = () => {
     }
   ];
 
+  const availableEndpoints = [
+    { path: '/api/v1/nlp-query', label: 'NLP to KGQL' },
+    { path: '/api/v1/kgql', label: 'Direct KGQL' },
+    { path: '/api/v1/alerts/check', label: 'Alerts' },
+  ];
+
   const registeredAgents = [
-    { 
+    {
       id: 'agent-001',
-      name: 'Sales Analysis Agent', 
-      status: 'enabled', 
-      api: 'NLP to KGQL',
+      name: 'Sales Analysis Agent',
+      status: 'enabled',
       lastActive: '2 min ago',
       requests24h: 1284,
       avgQueryTime: '234ms',
@@ -68,13 +92,16 @@ const AgentAnalyticsV2 = () => {
         { category: 'Environment', value: 'Production', color: '#ef4444' },
         { category: 'Team', value: 'Sales', color: '#8b5cf6' },
         { category: 'Priority', value: 'Critical', color: '#dc2626' }
+      ],
+      apiKeys: [
+        { id: 'key-001', name: 'Production Key', keyPreview: 'ct_...a3f2', endpoints: ['/api/v1/nlp-query'], expirationDate: 'Mar 15, 2025', status: 'active', createdAt: 'Dec 15, 2024' },
+        { id: 'key-002', name: 'Staging Key', keyPreview: 'ct_...b7e1', endpoints: ['/api/v1/nlp-query', '/api/v1/kgql'], expirationDate: 'Feb 1, 2025', status: 'expired', createdAt: 'Dec 15, 2024' },
       ]
     },
-    { 
+    {
       id: 'agent-002',
-      name: 'Customer Support Bot', 
-      status: 'enabled', 
-      api: 'NLP to KGQL',
+      name: 'Customer Support Bot',
+      status: 'enabled',
       lastActive: '5 min ago',
       requests24h: 892,
       avgQueryTime: '189ms',
@@ -85,13 +112,15 @@ const AgentAnalyticsV2 = () => {
         { category: 'Team', value: 'Support', color: '#ec4899' },
         { category: 'Type', value: 'Customer-Facing', color: '#8b5cf6' },
         { category: 'Priority', value: 'High', color: '#f59e0b' }
+      ],
+      apiKeys: [
+        { id: 'key-003', name: 'Primary Key', keyPreview: 'ct_...c4d8', endpoints: ['/api/v1/nlp-query'], expirationDate: 'Jun 30, 2025', status: 'active', createdAt: 'Dec 10, 2024' },
       ]
     },
-    { 
+    {
       id: 'agent-003',
-      name: 'Data Pipeline Agent', 
-      status: 'enabled', 
-      api: 'Direct KGQL',
+      name: 'Data Pipeline Agent',
+      status: 'enabled',
       lastActive: '1 min ago',
       requests24h: 2341,
       avgQueryTime: '45ms',
@@ -102,13 +131,17 @@ const AgentAnalyticsV2 = () => {
         { category: 'Team', value: 'Engineering', color: '#06b6d4' },
         { category: 'Type', value: 'Automated', color: '#10b981' },
         { category: 'Priority', value: 'Critical', color: '#dc2626' }
+      ],
+      apiKeys: [
+        { id: 'key-004', name: 'Pipeline Key', keyPreview: 'ct_...d9a5', endpoints: ['/api/v1/kgql'], expirationDate: 'Sep 1, 2025', status: 'active', createdAt: 'Nov 28, 2024' },
+        { id: 'key-005', name: 'Batch Key', keyPreview: 'ct_...e2b3', endpoints: ['/api/v1/kgql', '/api/v1/nlp-query'], expirationDate: 'Apr 15, 2025', status: 'active', createdAt: 'Dec 5, 2024' },
+        { id: 'key-006', name: 'Legacy Key', keyPreview: 'ct_...f1c7', endpoints: ['/api/v1/kgql'], expirationDate: 'Jan 10, 2025', status: 'expired', createdAt: 'Nov 28, 2024' },
       ]
     },
-    { 
+    {
       id: 'agent-004',
-      name: 'Anomaly Monitor', 
-      status: 'enabled', 
-      api: 'Alerts',
+      name: 'Anomaly Monitor',
+      status: 'enabled',
       lastActive: '30 sec ago',
       requests24h: 4521,
       avgQueryTime: '12ms',
@@ -118,13 +151,16 @@ const AgentAnalyticsV2 = () => {
         { category: 'Environment', value: 'Production', color: '#ef4444' },
         { category: 'Team', value: 'Engineering', color: '#06b6d4' },
         { category: 'Type', value: 'Internal', color: '#06b6d4' }
+      ],
+      apiKeys: [
+        { id: 'key-007', name: 'Monitor Key', keyPreview: 'ct_...g8h4', endpoints: ['/api/v1/alerts/check'], expirationDate: 'Dec 31, 2025', status: 'active', createdAt: 'Dec 1, 2024' },
+        { id: 'key-008', name: 'Backup Key', keyPreview: 'ct_...i5j9', endpoints: ['/api/v1/alerts/check', '/api/v1/kgql'], expirationDate: 'Jul 1, 2025', status: 'active', createdAt: 'Dec 8, 2024' },
       ]
     },
-    { 
+    {
       id: 'agent-005',
-      name: 'Research Assistant', 
-      status: 'disabled', 
-      api: 'NLP to KGQL',
+      name: 'Research Assistant',
+      status: 'disabled',
       lastActive: '2 hours ago',
       requests24h: 156,
       avgQueryTime: '412ms',
@@ -134,13 +170,15 @@ const AgentAnalyticsV2 = () => {
         { category: 'Environment', value: 'Staging', color: '#f59e0b' },
         { category: 'Team', value: 'Analytics', color: '#10b981' },
         { category: 'Priority', value: 'Low', color: '#6b7280' }
+      ],
+      apiKeys: [
+        { id: 'key-009', name: 'Dev Key', keyPreview: 'ct_...k3l6', endpoints: ['/api/v1/nlp-query', '/api/v1/kgql'], expirationDate: 'May 1, 2025', status: 'active', createdAt: 'Dec 18, 2024' },
       ]
     },
-    { 
+    {
       id: 'agent-006',
-      name: 'Report Generator', 
-      status: 'disabled', 
-      api: 'Direct KGQL',
+      name: 'Report Generator',
+      status: 'disabled',
       lastActive: '3 days ago',
       requests24h: 0,
       avgQueryTime: '-',
@@ -149,6 +187,9 @@ const AgentAnalyticsV2 = () => {
       tags: [
         { category: 'Environment', value: 'Development', color: '#3b82f6' },
         { category: 'Team', value: 'Analytics', color: '#10b981' }
+      ],
+      apiKeys: [
+        { id: 'key-010', name: 'Report Key', keyPreview: 'ct_...m2n8', endpoints: ['/api/v1/kgql'], expirationDate: 'Jan 5, 2025', status: 'expired', createdAt: 'Dec 5, 2024' },
       ]
     },
   ];
@@ -984,7 +1025,6 @@ const AgentAnalyticsV2 = () => {
               {activeSection === 'costs' && selectedAgentForCosts && `${selectedAgentForCosts.name} - Cost Breakdown`}
               {activeSection === 'traces' && 'Query Traces'}
             </h1>
-            <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>Last updated 2 minutes ago</p>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
             {activeSection === 'costs' && selectedAgentForCosts && (
@@ -1005,33 +1045,6 @@ const AgentAnalyticsV2 = () => {
             )}
             {activeSection === 'agents' && (
               <>
-                <select 
-                  value={selectedTagFilter}
-                  onChange={(e) => {
-                    setSelectedTagFilter(e.target.value);
-                    setCurrentAgentPage(1); // Reset to page 1 when filter changes
-                  }}
-                  style={{
-                    padding: '8px 12px',
-                    background: '#1a1d23',
-                    border: '1px solid #2d333b',
-                    borderRadius: '6px',
-                    color: '#e4e4e7',
-                    fontSize: '13px',
-                    fontFamily: 'inherit'
-                  }}
-                >
-                  <option value="all">All Tags</option>
-                  {tagCategories.map(category => (
-                    <optgroup key={category.name} label={category.name}>
-                      {category.tags.map(tag => (
-                        <option key={`${category.name}-${tag.value}`} value={`${category.name}:${tag.value}`}>
-                          {tag.value}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
                 <button 
                   onClick={() => setShowTagManagementModal(true)}
                   style={{
@@ -1297,40 +1310,6 @@ const AgentAnalyticsV2 = () => {
                 </div>
               </div>
 
-              {/* API Usage Summary */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '16px',
-                marginBottom: '24px'
-              }}>
-                {[
-                  { api: 'Direct KGQL', agents: 2, color: '#22c55e', desc: 'Raw query execution' },
-                  { api: 'Alerts', agents: 1, color: '#f59e0b', desc: 'Threshold monitoring' },
-                  { api: 'NLP to KGQL', agents: 3, color: '#3b82f6', desc: 'Natural language queries' },
-                ].map((item, idx) => (
-                  <div key={idx} style={{
-                    padding: '16px',
-                    background: '#13161b',
-                    borderRadius: '8px',
-                    border: '1px solid #23272f',
-                    borderLeft: `3px solid ${item.color}`
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 600 }}>{item.api}</span>
-                      <span style={{
-                        padding: '2px 8px',
-                        background: '#1a1d23',
-                        borderRadius: '10px',
-                        fontSize: '11px',
-                        color: '#9ca3af'
-                      }}>{item.agents} agents</span>
-                    </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-
               {/* Agents Table */}
               <div style={{
                 background: '#13161b',
@@ -1342,7 +1321,7 @@ const AgentAnalyticsV2 = () => {
                   <thead>
                     <tr style={{ background: '#1a1d23' }}>
                       <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Agent Name</th>
-                      <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>API</th>
+                      <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>API Keys</th>
                       <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Tags</th>
                       <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Status</th>
                       <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Requests (24h)</th>
@@ -1367,14 +1346,26 @@ const AgentAnalyticsV2 = () => {
                           <p style={{ fontSize: '11px', color: '#6b7280', margin: 0 }}>{agent.id}</p>
                         </td>
                         <td style={{ padding: '14px 16px' }}>
-                          <span style={{
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            fontSize: '11px',
-                            fontWeight: 500,
-                            background: `${getApiColor(agent.api)}15`,
-                            color: getApiColor(agent.api)
-                          }}>{agent.api}</span>
+                          {(() => {
+                            const activeKeys = agent.apiKeys.filter(k => k.status === 'active').length;
+                            const totalKeys = agent.apiKeys.length;
+                            return (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '4px 10px',
+                                borderRadius: '10px',
+                                fontSize: '11px',
+                                fontWeight: 500,
+                                background: '#1a1d23',
+                                color: activeKeys > 0 ? '#22c55e' : '#6b7280'
+                              }}>
+                                <span style={{ fontSize: '13px' }}>&#128273;</span>
+                                {activeKeys} active{totalKeys > activeKeys ? ` / ${totalKeys} total` : ''}
+                              </span>
+                            );
+                          })()}
                         </td>
                         <td style={{ padding: '14px 16px' }}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: '250px' }}>
@@ -1423,21 +1414,37 @@ const AgentAnalyticsV2 = () => {
                         </td>
                         <td style={{ textAlign: 'right', padding: '14px 16px', fontSize: '12px', color: '#6b7280' }}>{agent.lastActive}</td>
                         <td style={{ textAlign: 'right', padding: '14px 16px' }}>
-                          <button 
-                            onClick={() => {
-                              setSelectedAgentForConfig(agent);
-                              setShowConfigureModal(true);
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (openDropdownAgentId === agent.id) {
+                                setOpenDropdownAgentId(null);
+                              } else {
+                                setSelectedAgentForConfig(agent);
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                const dropdownHeight = 170;
+                                const spaceBelow = window.innerHeight - rect.bottom;
+                                setDropdownPosition({
+                                  top: spaceBelow < dropdownHeight ? rect.top - dropdownHeight - 4 : rect.bottom + 4,
+                                  right: window.innerWidth - rect.right
+                                });
+                                setOpenDropdownAgentId(agent.id);
+                              }
                             }}
                             style={{
-                            padding: '6px 10px',
-                            background: '#1a1d23',
-                            border: '1px solid #2d333b',
-                            borderRadius: '4px',
-                            color: '#9ca3af',
-                            fontSize: '11px',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}>Configure</button>
+                              padding: '6px',
+                              background: openDropdownAgentId === agent.id ? '#1a1d23' : 'transparent',
+                              border: openDropdownAgentId === agent.id ? '1px solid #2d333b' : '1px solid transparent',
+                              borderRadius: '4px',
+                              color: '#9ca3af',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <MoreVertical size={16} />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -1663,7 +1670,7 @@ const AgentAnalyticsV2 = () => {
                   <thead>
                     <tr style={{ background: '#1a1d23' }}>
                       <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Agent Name</th>
-                      <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Primary API</th>
+                      <th style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>API Keys</th>
                       <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Total Cost</th>
                       <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Total Requests</th>
                       <th style={{ textAlign: 'right', padding: '14px 16px', fontSize: '12px', fontWeight: 500, color: '#6b7280' }}>Avg Cost/Req</th>
@@ -1681,14 +1688,19 @@ const AgentAnalyticsV2 = () => {
                             <p style={{ fontSize: '11px', color: '#6b7280', margin: 0 }}>{agent.id}</p>
                           </td>
                           <td style={{ padding: '14px 16px' }}>
-                            <span style={{
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              fontWeight: 500,
-                              background: `${getApiColor(matchingAgent?.api)}15`,
-                              color: getApiColor(matchingAgent?.api)
-                            }}>{matchingAgent?.api || 'N/A'}</span>
+                            {(() => {
+                              const activeKeys = matchingAgent?.apiKeys.filter(k => k.status === 'active').length || 0;
+                              return (
+                                <span style={{
+                                  padding: '4px 8px',
+                                  borderRadius: '10px',
+                                  fontSize: '11px',
+                                  fontWeight: 500,
+                                  background: '#1a1d23',
+                                  color: activeKeys > 0 ? '#22c55e' : '#6b7280'
+                                }}>{activeKeys} active</span>
+                              );
+                            })()}
                           </td>
                           <td style={{ textAlign: 'right', padding: '14px 16px', fontSize: '14px', fontWeight: 600 }}>${agent.cost.toFixed(2)}</td>
                           <td style={{ textAlign: 'right', padding: '14px 16px', fontSize: '13px', color: '#9ca3af' }}>{agent.requests.toLocaleString()}</td>
@@ -2384,25 +2396,6 @@ const AgentAnalyticsV2 = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#9ca3af', marginBottom: '8px' }}>API Type</label>
-                <select style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#1a1d23',
-                  border: '1px solid #2d333b',
-                  borderRadius: '6px',
-                  color: '#e4e4e7',
-                  fontSize: '13px',
-                  fontFamily: 'inherit'
-                }}>
-                  <option value="">Select API...</option>
-                  <option value="direct-kgql">Direct KGQL</option>
-                  <option value="alerts">Alerts</option>
-                  <option value="nlp-to-kgql">NLP to KGQL</option>
-                </select>
-              </div>
-
-              <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#9ca3af', marginBottom: '8px' }}>Description (Optional)</label>
                 <textarea
                   placeholder="Brief description of what this agent does..."
@@ -2427,21 +2420,8 @@ const AgentAnalyticsV2 = () => {
                 borderRadius: '6px',
                 border: '1px solid #2d333b'
               }}>
-                <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 8px' }}>Available APIs</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                    <span style={{ color: '#22c55e' }}>Direct KGQL</span>
-                    <span style={{ color: '#6b7280' }}>Raw query execution, lowest query time</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                    <span style={{ color: '#f59e0b' }}>Alerts</span>
-                    <span style={{ color: '#6b7280' }}>Threshold monitoring & notifications</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                    <span style={{ color: '#3b82f6' }}>NLP to KGQL</span>
-                    <span style={{ color: '#6b7280' }}>Natural language to query translation</span>
-                  </div>
-                </div>
+                <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 4px' }}>Note</p>
+                <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>After registering the agent, you can generate API keys with specific endpoint access and expiration dates from the agent configuration.</p>
               </div>
             </div>
 
@@ -2477,8 +2457,71 @@ const AgentAnalyticsV2 = () => {
         </div>
       )}
 
-      {/* Configure Agent Modal */}
-      {showConfigureModal && selectedAgentForConfig && (
+      {/* Agent Actions Dropdown */}
+      {openDropdownAgentId && (
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 999 }}
+            onClick={() => setOpenDropdownAgentId(null)}
+          />
+          <div style={{
+            position: 'fixed',
+            top: dropdownPosition.top,
+            right: dropdownPosition.right,
+            zIndex: 1000,
+            width: '180px',
+            background: '#1a1d23',
+            border: '1px solid #2d333b',
+            borderRadius: '8px',
+            padding: '4px 0',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
+          }}>
+            {[
+              // { label: 'Agent Settings', onClick: () => { setShowAgentSettingsModal(true); setOpenDropdownAgentId(null); } },
+              { label: 'API Keys', onClick: () => { setShowGenerateKeyForm(false); setShowApiKeysModal(true); setOpenDropdownAgentId(null); } },
+              { label: 'Manage Tags', onClick: () => { setShowAgentTagsModal(true); setOpenDropdownAgentId(null); } },
+            ].map((item) => (
+              <button
+                key={item.label}
+                onClick={item.onClick}
+                style={{
+                  width: '100%',
+                  padding: '8px 14px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#e4e4e7',
+                  fontSize: '12px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#23272f'}
+                onMouseLeave={e => e.currentTarget.style.background = 'none'}
+              >{item.label}</button>
+            ))}
+            <div style={{ height: '1px', background: '#2d333b', margin: '4px 0' }} />
+            <button
+              onClick={() => { setShowDeleteConfirmModal(true); setOpenDropdownAgentId(null); }}
+              style={{
+                width: '100%',
+                padding: '8px 14px',
+                background: 'none',
+                border: 'none',
+                color: '#ef4444',
+                fontSize: '12px',
+                textAlign: 'left',
+                cursor: 'pointer',
+                fontFamily: 'inherit'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#23272f'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            >Disable Agent</button>
+          </div>
+        </>
+      )}
+
+      {/* Agent Settings Modal */}
+      {showAgentSettingsModal && selectedAgentForConfig && (
         <div style={{
           position: 'fixed',
           inset: 0,
@@ -2487,9 +2530,11 @@ const AgentAnalyticsV2 = () => {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1000
-        }} onClick={() => setShowConfigureModal(false)}>
+        }} onClick={() => setShowAgentSettingsModal(false)}>
           <div style={{
-            width: '560px',
+            width: '520px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
             background: '#13161b',
             borderRadius: '12px',
             border: '1px solid #23272f',
@@ -2497,18 +2542,12 @@ const AgentAnalyticsV2 = () => {
           }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div>
-                <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px' }}>Configure Agent</h2>
+                <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px' }}>Agent Settings</h2>
                 <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>{selectedAgentForConfig.id}</p>
               </div>
-              <button 
-                onClick={() => setShowConfigureModal(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#6b7280',
-                  fontSize: '20px',
-                  cursor: 'pointer'
-                }}
+              <button
+                onClick={() => setShowAgentSettingsModal(false)}
+                style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '20px', cursor: 'pointer' }}
               >×</button>
             </div>
 
@@ -2568,29 +2607,8 @@ const AgentAnalyticsV2 = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#9ca3af', marginBottom: '8px' }}>API Type</label>
-                <select 
-                  defaultValue={selectedAgentForConfig.api}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    background: '#1a1d23',
-                    border: '1px solid #2d333b',
-                    borderRadius: '6px',
-                    color: '#e4e4e7',
-                    fontSize: '13px',
-                    fontFamily: 'inherit'
-                  }}
-                >
-                  <option value="Direct KGQL">Direct KGQL</option>
-                  <option value="Alerts">Alerts</option>
-                  <option value="NLP to KGQL">NLP to KGQL</option>
-                </select>
-              </div>
-
-              <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#9ca3af', marginBottom: '8px' }}>Agent Status</label>
-                <select 
+                <select
                   defaultValue={selectedAgentForConfig.status}
                   style={{
                     width: '100%',
@@ -2608,82 +2626,6 @@ const AgentAnalyticsV2 = () => {
                 </select>
               </div>
 
-              {/* Tags Management */}
-              <div style={{
-                padding: '16px',
-                background: '#1a1d23',
-                borderRadius: '8px',
-                border: '1px solid #2d333b'
-              }}>
-                <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 12px' }}>Agent Tags</p>
-                
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
-                  {selectedAgentForConfig.tags && selectedAgentForConfig.tags.map((tag, idx) => (
-                    <span 
-                      key={idx}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '4px 10px',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        background: `${tag.color}15`,
-                        color: tag.color
-                      }}
-                    >
-                      {tag.value}
-                      <button
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: tag.color,
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          padding: 0,
-                          lineHeight: 1
-                        }}
-                      >×</button>
-                    </span>
-                  ))}
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px' }}>
-                  <select style={{
-                    padding: '8px 10px',
-                    background: '#0f1115',
-                    border: '1px solid #23272f',
-                    borderRadius: '6px',
-                    color: '#e4e4e7',
-                    fontSize: '12px',
-                    fontFamily: 'inherit'
-                  }}>
-                    <option value="">Select a tag...</option>
-                    {tagCategories.map(category => (
-                      <optgroup key={category.name} label={category.name}>
-                        {category.tags.map(tag => (
-                          <option key={`${category.name}-${tag.value}`} value={`${category.name}:${tag.value}`}>
-                            {tag.value}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
-                  <button style={{
-                    padding: '8px 12px',
-                    background: '#3b82f6',
-                    border: 'none',
-                    borderRadius: '6px',
-                    color: '#fff',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit'
-                  }}>Add Tag</button>
-                </div>
-              </div>
-
               {/* Performance Settings */}
               <div style={{
                 padding: '16px',
@@ -2692,7 +2634,7 @@ const AgentAnalyticsV2 = () => {
                 border: '1px solid #2d333b'
               }}>
                 <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 12px' }}>Performance Settings</p>
-                
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>Rate Limit (req/min)</label>
@@ -2739,7 +2681,7 @@ const AgentAnalyticsV2 = () => {
                 border: '1px solid #2d333b'
               }}>
                 <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 12px' }}>Alert Thresholds</p>
-                
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <input type="checkbox" defaultChecked id="errorAlert" style={{ width: '16px', height: '16px' }} />
@@ -2764,7 +2706,7 @@ const AgentAnalyticsV2 = () => {
                 border: '1px solid #2d333b'
               }}>
                 <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 12px' }}>Current Metrics</p>
-                
+
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                   <div>
                     <p style={{ fontSize: '11px', color: '#6b7280', margin: '0 0 4px' }}>Avg Query Time</p>
@@ -2772,9 +2714,9 @@ const AgentAnalyticsV2 = () => {
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', color: '#6b7280', margin: '0 0 4px' }}>Success Rate</p>
-                    <p style={{ 
-                      fontSize: '16px', 
-                      fontWeight: 600, 
+                    <p style={{
+                      fontSize: '16px',
+                      fontWeight: 600,
                       margin: 0,
                       color: selectedAgentForConfig.successRate >= 99 ? '#22c55e' : '#eab308'
                     }}>
@@ -2789,23 +2731,9 @@ const AgentAnalyticsV2 = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button 
-                style={{
-                  padding: '10px 16px',
-                  background: '#1a1d23',
-                  border: '1px solid #2d333b',
-                  borderRadius: '6px',
-                  color: '#ef4444',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  fontWeight: 500
-                }}
-              >Delete Agent</button>
-              <div style={{ flex: 1 }}></div>
-              <button 
-                onClick={() => setShowConfigureModal(false)}
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowAgentSettingsModal(false)}
                 style={{
                   padding: '10px 16px',
                   background: '#1a1d23',
@@ -2828,6 +2756,402 @@ const AgentAnalyticsV2 = () => {
                 cursor: 'pointer',
                 fontFamily: 'inherit'
               }}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* API Keys Modal */}
+      {showApiKeysModal && selectedAgentForConfig && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }} onClick={() => setShowApiKeysModal(false)}>
+          <div style={{
+            width: '560px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            background: '#13161b',
+            borderRadius: '12px',
+            border: '1px solid #23272f',
+            padding: '24px'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div>
+                <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px' }}>API Keys</h2>
+                <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>{selectedAgentForConfig.name} — {selectedAgentForConfig.id}</p>
+              </div>
+              <button
+                onClick={() => setShowApiKeysModal(false)}
+                style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '20px', cursor: 'pointer' }}
+              >×</button>
+            </div>
+
+            <div style={{
+              padding: '16px',
+              background: '#1a1d23',
+              borderRadius: '8px',
+              border: '1px solid #2d333b'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: 0 }}>API Keys</p>
+                  <span style={{
+                    padding: '1px 7px',
+                    background: '#0f1115',
+                    borderRadius: '10px',
+                    fontSize: '11px',
+                    color: '#6b7280'
+                  }}>{selectedAgentForConfig.apiKeys.length}</span>
+                </div>
+                <button
+                  onClick={() => setShowGenerateKeyForm(!showGenerateKeyForm)}
+                  style={{
+                    padding: '5px 10px',
+                    background: '#3b82f6',
+                    border: 'none',
+                    borderRadius: '4px',
+                    color: '#fff',
+                    fontSize: '11px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit'
+                  }}
+                >{showGenerateKeyForm ? 'Cancel' : '+ Generate Key'}</button>
+              </div>
+
+              {/* Generate Key Form */}
+              {showGenerateKeyForm && (
+                <div style={{
+                  padding: '12px',
+                  background: '#0f1115',
+                  borderRadius: '6px',
+                  border: '1px solid #23272f',
+                  marginBottom: '12px'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>Key Name</label>
+                      <input
+                        placeholder="e.g., Production Key"
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          background: '#13161b',
+                          border: '1px solid #23272f',
+                          borderRadius: '6px',
+                          color: '#e4e4e7',
+                          fontSize: '12px',
+                          fontFamily: 'inherit'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>Expiration Date <span style={{ color: '#ef4444' }}>*</span></label>
+                      <input
+                        type="date"
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          background: '#13161b',
+                          border: '1px solid #23272f',
+                          borderRadius: '6px',
+                          color: '#e4e4e7',
+                          fontSize: '12px',
+                          fontFamily: 'inherit'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>Endpoints <span style={{ color: '#ef4444' }}>*</span> <span style={{ color: '#4b5563', fontWeight: 400 }}>(select at least one)</span></label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {availableEndpoints.map((ep) => (
+                          <label key={ep.path} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#e4e4e7', cursor: 'pointer' }}>
+                            <input type="checkbox" style={{ width: '14px', height: '14px' }} />
+                            <span style={{ fontFamily: 'monospace', fontSize: '11px', color: '#9ca3af' }}>{ep.path}</span>
+                            <span style={{ fontSize: '11px', color: '#4b5563' }}>({ep.label})</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <button style={{
+                      padding: '8px 12px',
+                      background: '#22c55e',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      marginTop: '4px'
+                    }}>Generate API Key</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Existing Keys List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {selectedAgentForConfig.apiKeys.map((apiKey) => (
+                  <div key={apiKey.id} style={{
+                    padding: '10px 12px',
+                    background: '#0f1115',
+                    borderRadius: '6px',
+                    border: `1px solid ${apiKey.status === 'expired' ? '#7f1d1d' : '#23272f'}`
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{
+                          width: '6px', height: '6px', borderRadius: '50%',
+                          background: apiKey.status === 'active' ? '#22c55e' : '#ef4444'
+                        }}></span>
+                        <span style={{ fontSize: '12px', fontWeight: 500, color: '#e4e4e7' }}>{apiKey.name}</span>
+                        <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#6b7280' }}>{apiKey.keyPreview}</span>
+                      </div>
+                      <button style={{
+                        padding: '3px 8px',
+                        background: 'none',
+                        border: '1px solid #7f1d1d',
+                        borderRadius: '4px',
+                        color: '#ef4444',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit'
+                      }}>{apiKey.status === 'active' ? 'Revoke' : 'Expired'}</button>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '6px' }}>
+                      {apiKey.endpoints.map((ep) => (
+                        <span key={ep} style={{
+                          padding: '2px 6px',
+                          borderRadius: '3px',
+                          fontSize: '10px',
+                          fontFamily: 'monospace',
+                          background: '#1a1d2380',
+                          color: '#9ca3af'
+                        }}>{ep}</span>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', fontSize: '10px', color: '#4b5563' }}>
+                      <span>Expires: <span style={{ color: apiKey.status === 'expired' ? '#ef4444' : '#6b7280' }}>{apiKey.expirationDate}</span></span>
+                      <span>Created: {apiKey.createdAt}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowApiKeysModal(false)}
+                style={{
+                  padding: '10px 16px',
+                  background: '#3b82f6',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}
+              >Done</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Agent Tags Modal */}
+      {showAgentTagsModal && selectedAgentForConfig && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }} onClick={() => setShowAgentTagsModal(false)}>
+          <div style={{
+            width: '480px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            background: '#13161b',
+            borderRadius: '12px',
+            border: '1px solid #23272f',
+            padding: '24px'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div>
+                <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px' }}>Manage Tags</h2>
+                <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>{selectedAgentForConfig.name}</p>
+              </div>
+              <button
+                onClick={() => setShowAgentTagsModal(false)}
+                style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '20px', cursor: 'pointer' }}
+              >×</button>
+            </div>
+
+            <div style={{
+              padding: '16px',
+              background: '#1a1d23',
+              borderRadius: '8px',
+              border: '1px solid #2d333b'
+            }}>
+              <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '0 0 12px' }}>Agent Tags</p>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+                {selectedAgentForConfig.tags && selectedAgentForConfig.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 10px',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      background: `${tag.color}15`,
+                      color: tag.color
+                    }}
+                  >
+                    {tag.value}
+                    <button
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: tag.color,
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        padding: 0,
+                        lineHeight: 1
+                      }}
+                    >×</button>
+                  </span>
+                ))}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px' }}>
+                <select style={{
+                  padding: '8px 10px',
+                  background: '#0f1115',
+                  border: '1px solid #23272f',
+                  borderRadius: '6px',
+                  color: '#e4e4e7',
+                  fontSize: '12px',
+                  fontFamily: 'inherit'
+                }}>
+                  <option value="">Select a tag...</option>
+                  {tagCategories.map(category => (
+                    <optgroup key={category.name} label={category.name}>
+                      {category.tags.map(tag => (
+                        <option key={`${category.name}-${tag.value}`} value={`${category.name}:${tag.value}`}>
+                          {tag.value}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                <button style={{
+                  padding: '8px 12px',
+                  background: '#3b82f6',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}>Add Tag</button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowAgentTagsModal(false)}
+                style={{
+                  padding: '10px 16px',
+                  background: '#1a1d23',
+                  border: '1px solid #2d333b',
+                  borderRadius: '6px',
+                  color: '#9ca3af',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}
+              >Cancel</button>
+              <button style={{
+                padding: '10px 16px',
+                background: '#3b82f6',
+                border: 'none',
+                borderRadius: '6px',
+                color: '#fff',
+                fontSize: '13px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                fontFamily: 'inherit'
+              }}>Save Tags</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Agent Confirmation */}
+      {showDeleteConfirmModal && selectedAgentForConfig && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }} onClick={() => setShowDeleteConfirmModal(false)}>
+          <div style={{
+            width: '400px',
+            background: '#13161b',
+            borderRadius: '12px',
+            border: '1px solid #23272f',
+            padding: '24px'
+          }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px' }}>Delete Agent</h2>
+            <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 8px' }}>
+              Are you sure you want to delete <strong style={{ color: '#e4e4e7' }}>{selectedAgentForConfig.name}</strong>?
+            </p>
+            <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 20px' }}>
+              This will permanently revoke all {selectedAgentForConfig.apiKeys.length} API key{selectedAgentForConfig.apiKeys.length !== 1 ? 's' : ''} associated with this agent. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowDeleteConfirmModal(false)}
+                style={{
+                  padding: '10px 16px',
+                  background: '#1a1d23',
+                  border: '1px solid #2d333b',
+                  borderRadius: '6px',
+                  color: '#9ca3af',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}
+              >Cancel</button>
+              <button style={{
+                padding: '10px 16px',
+                background: '#ef4444',
+                border: 'none',
+                borderRadius: '6px',
+                color: '#fff',
+                fontSize: '13px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                fontFamily: 'inherit'
+              }}>Delete Agent</button>
             </div>
           </div>
         </div>
