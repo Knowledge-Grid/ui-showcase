@@ -3102,7 +3102,7 @@ const AgentAnalyticsV2 = () => {
         </div>
       )}
 
-      {/* Delete Agent Confirmation */}
+      {/* Disable Agent Confirmation */}
       {showDeleteConfirmModal && selectedAgentForConfig && (
         <div style={{
           position: 'fixed',
@@ -3120,12 +3120,12 @@ const AgentAnalyticsV2 = () => {
             border: '1px solid #23272f',
             padding: '24px'
           }} onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px' }}>Delete Agent</h2>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px' }}>Disable Agent</h2>
             <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 8px' }}>
-              Are you sure you want to delete <strong style={{ color: '#e4e4e7' }}>{selectedAgentForConfig.name}</strong>?
+              Are you sure you want to disable <strong style={{ color: '#e4e4e7' }}>{selectedAgentForConfig.name}</strong>?
             </p>
             <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 20px' }}>
-              This will permanently revoke all {selectedAgentForConfig.apiKeys.length} API key{selectedAgentForConfig.apiKeys.length !== 1 ? 's' : ''} associated with this agent. This action cannot be undone.
+              This will also disable all {selectedAgentForConfig.apiKeys.length} API key{selectedAgentForConfig.apiKeys.length !== 1 ? 's' : ''} associated with this agent.
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
@@ -3151,7 +3151,7 @@ const AgentAnalyticsV2 = () => {
                 fontWeight: 500,
                 cursor: 'pointer',
                 fontFamily: 'inherit'
-              }}>Delete Agent</button>
+              }}>Disable Agent</button>
             </div>
           </div>
         </div>
