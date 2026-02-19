@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MoreVertical } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const AgentAnalyticsV2 = () => {
   const [activeSection, setActiveSection] = useState('overview');
@@ -21,6 +22,8 @@ const AgentAnalyticsV2 = () => {
   const [currentAgentPage, setCurrentAgentPage] = useState(1);
   const tracesPerPage = 10;
   const agentsPerPage = 10;
+  const [selectedAgentForOverviewNP, setSelectedAgentForOverviewNP] = useState(null);
+  const [overviewNPTimePeriod, setOverviewNPTimePeriod] = useState('7d');
 
   // Close dropdown on scroll or resize since it uses fixed positioning
   useEffect(() => {
@@ -320,6 +323,503 @@ const AgentAnalyticsV2 = () => {
       { name: 'Alerts', cost: 412.30, requests: 52180, avgCost: 0.008 },
     ],
     dailyCosts: [82, 94, 78, 102, 89, 95, 88, 76, 92, 108, 98, 87, 94, 112]
+  };
+
+  const overviewNPData = {
+    kpis: {
+      '24h': { totalRequests: 9194, successRate: 99.1, avgResponseTime: 148, errorCount: 83, changes: { totalRequests: 12.3, successRate: 0.3, avgResponseTime: -5.2, errorCount: -8.1 } },
+      '7d': { totalRequests: 58420, successRate: 98.7, avgResponseTime: 156, errorCount: 762, changes: { totalRequests: 8.7, successRate: -0.2, avgResponseTime: 3.1, errorCount: 15.4 } },
+      '30d': { totalRequests: 245800, successRate: 98.4, avgResponseTime: 162, errorCount: 3932, changes: { totalRequests: 14.2, successRate: -0.5, avgResponseTime: 7.8, errorCount: 22.1 } },
+    },
+    requestVolume: {
+      '24h': [
+        { label: '00:00', success: 280, error4xx: 3, error5xx: 1 },
+        { label: '02:00', success: 145, error4xx: 1, error5xx: 0 },
+        { label: '04:00', success: 98, error4xx: 1, error5xx: 1 },
+        { label: '06:00', success: 210, error4xx: 2, error5xx: 0 },
+        { label: '08:00', success: 425, error4xx: 5, error5xx: 2 },
+        { label: '10:00', success: 612, error4xx: 8, error5xx: 3 },
+        { label: '12:00', success: 580, error4xx: 7, error5xx: 2 },
+        { label: '14:00', success: 645, error4xx: 9, error5xx: 4 },
+        { label: '16:00', success: 590, error4xx: 6, error5xx: 2 },
+        { label: '18:00', success: 478, error4xx: 5, error5xx: 1 },
+        { label: '20:00', success: 356, error4xx: 4, error5xx: 2 },
+        { label: '22:00', success: 310, error4xx: 3, error5xx: 1 },
+      ],
+      '7d': [
+        { label: 'Mon', success: 8420, error4xx: 89, error5xx: 23 },
+        { label: 'Tue', success: 9150, error4xx: 102, error5xx: 18 },
+        { label: 'Wed', success: 8890, error4xx: 95, error5xx: 31 },
+        { label: 'Thu', success: 9540, error4xx: 110, error5xx: 27 },
+        { label: 'Fri', success: 8780, error4xx: 88, error5xx: 20 },
+        { label: 'Sat', success: 5210, error4xx: 45, error5xx: 12 },
+        { label: 'Sun', success: 4620, error4xx: 38, error5xx: 9 },
+      ],
+      '30d': [
+        { label: 'Jan 1', success: 7800, error4xx: 82, error5xx: 19 },
+        { label: 'Jan 2', success: 8100, error4xx: 90, error5xx: 22 },
+        { label: 'Jan 3', success: 7650, error4xx: 78, error5xx: 15 },
+        { label: 'Jan 4', success: 5100, error4xx: 42, error5xx: 10 },
+        { label: 'Jan 5', success: 4800, error4xx: 38, error5xx: 8 },
+        { label: 'Jan 6', success: 8200, error4xx: 88, error5xx: 21 },
+        { label: 'Jan 7', success: 8450, error4xx: 92, error5xx: 24 },
+        { label: 'Jan 8', success: 8900, error4xx: 98, error5xx: 26 },
+        { label: 'Jan 9', success: 9200, error4xx: 105, error5xx: 28 },
+        { label: 'Jan 10', success: 8700, error4xx: 91, error5xx: 20 },
+        { label: 'Jan 11', success: 5300, error4xx: 44, error5xx: 11 },
+        { label: 'Jan 12', success: 4900, error4xx: 40, error5xx: 9 },
+        { label: 'Jan 13', success: 8100, error4xx: 85, error5xx: 18 },
+        { label: 'Jan 14', success: 8600, error4xx: 94, error5xx: 25 },
+        { label: 'Jan 15', success: 9100, error4xx: 101, error5xx: 27 },
+        { label: 'Jan 16', success: 8800, error4xx: 96, error5xx: 23 },
+        { label: 'Jan 17', success: 9300, error4xx: 108, error5xx: 29 },
+        { label: 'Jan 18', success: 5400, error4xx: 46, error5xx: 12 },
+        { label: 'Jan 19', success: 5000, error4xx: 41, error5xx: 10 },
+        { label: 'Jan 20', success: 8300, error4xx: 87, error5xx: 20 },
+        { label: 'Jan 21', success: 8750, error4xx: 95, error5xx: 24 },
+        { label: 'Jan 22', success: 9050, error4xx: 100, error5xx: 26 },
+        { label: 'Jan 23', success: 8500, error4xx: 93, error5xx: 22 },
+        { label: 'Jan 24', success: 9400, error4xx: 107, error5xx: 30 },
+        { label: 'Jan 25', success: 5200, error4xx: 43, error5xx: 11 },
+        { label: 'Jan 26', success: 4700, error4xx: 37, error5xx: 8 },
+        { label: 'Jan 27', success: 8000, error4xx: 84, error5xx: 19 },
+        { label: 'Jan 28', success: 8550, error4xx: 93, error5xx: 25 },
+        { label: 'Jan 29', success: 9150, error4xx: 102, error5xx: 28 },
+        { label: 'Jan 30', success: 8650, error4xx: 95, error5xx: 23 },
+      ],
+    },
+    topAgents: [
+      { agentId: 'agent-004', name: 'Anomaly Monitor', requests: 4521, successRate: 100 },
+      { agentId: 'agent-003', name: 'Data Pipeline Agent', requests: 2341, successRate: 99.8 },
+      { agentId: 'agent-001', name: 'Sales Analysis Agent', requests: 1284, successRate: 99.2 },
+      { agentId: 'agent-002', name: 'Customer Support Bot', requests: 892, successRate: 98.7 },
+      { agentId: 'agent-005', name: 'Research Assistant', requests: 156, successRate: 99.5 },
+    ],
+    recentErrors: [
+      { agentName: 'Customer Support Bot', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Database connection timeout', timestamp: '14:21:32' },
+      { agentName: 'Research Assistant', endpoint: '/api/v1/nlp-query', statusCode: 429, errorMessage: 'Rate limit exceeded', timestamp: '14:18:22' },
+      { agentName: 'Sales Analysis Agent', endpoint: '/api/v1/nlp-query', statusCode: 502, errorMessage: 'Upstream service unavailable', timestamp: '14:12:05' },
+      { agentName: 'Data Pipeline Agent', endpoint: '/api/v1/kgql', statusCode: 500, errorMessage: 'Query execution timeout', timestamp: '13:58:41' },
+      { agentName: 'Customer Support Bot', endpoint: '/api/v1/nlp-query', statusCode: 422, errorMessage: 'Invalid query syntax', timestamp: '13:45:19' },
+      { agentName: 'Anomaly Monitor', endpoint: '/api/v1/alerts/check', statusCode: 503, errorMessage: 'Service temporarily unavailable', timestamp: '13:32:08' },
+      { agentName: 'Sales Analysis Agent', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Internal model error', timestamp: '13:18:55' },
+      { agentName: 'Data Pipeline Agent', endpoint: '/api/v1/kgql', statusCode: 400, errorMessage: 'Malformed KGQL query', timestamp: '13:05:42' },
+      { agentName: 'Research Assistant', endpoint: '/api/v1/nlp-query', statusCode: 504, errorMessage: 'Gateway timeout', timestamp: '12:52:31' },
+      { agentName: 'Customer Support Bot', endpoint: '/api/v1/nlp-query', statusCode: 429, errorMessage: 'Rate limit exceeded', timestamp: '12:38:14' },
+    ],
+    agentDetails: {
+      'agent-001': {
+        description: 'Handles natural language queries for sales team dashboards and reporting.',
+        kpis: {
+          '24h': { totalRequests: 1284, successRate: 99.2, avgResponseTime: 234, errorCount: 10, changes: { totalRequests: 5.1, successRate: 0.1, avgResponseTime: -2.3, errorCount: -12.0 } },
+          '7d': { totalRequests: 8420, successRate: 99.0, avgResponseTime: 241, errorCount: 84, changes: { totalRequests: 7.8, successRate: -0.1, avgResponseTime: 1.5, errorCount: 9.2 } },
+          '30d': { totalRequests: 34500, successRate: 98.8, avgResponseTime: 248, errorCount: 414, changes: { totalRequests: 12.4, successRate: -0.3, avgResponseTime: 4.2, errorCount: 18.5 } },
+        },
+        requestVolume: {
+          '24h': [
+            { label: '00:00', success: 42, error4xx: 0, error5xx: 0 }, { label: '02:00', success: 18, error4xx: 0, error5xx: 0 },
+            { label: '04:00', success: 12, error4xx: 0, error5xx: 0 }, { label: '06:00', success: 35, error4xx: 1, error5xx: 0 },
+            { label: '08:00', success: 85, error4xx: 1, error5xx: 0 }, { label: '10:00', success: 142, error4xx: 2, error5xx: 1 },
+            { label: '12:00', success: 128, error4xx: 1, error5xx: 0 }, { label: '14:00', success: 156, error4xx: 2, error5xx: 1 },
+            { label: '16:00', success: 134, error4xx: 1, error5xx: 0 }, { label: '18:00', success: 98, error4xx: 1, error5xx: 0 },
+            { label: '20:00', success: 65, error4xx: 0, error5xx: 0 }, { label: '22:00', success: 48, error4xx: 0, error5xx: 0 },
+          ],
+          '7d': [
+            { label: 'Mon', success: 1210, error4xx: 8, error5xx: 2 }, { label: 'Tue', success: 1340, error4xx: 10, error5xx: 1 },
+            { label: 'Wed', success: 1180, error4xx: 9, error5xx: 3 }, { label: 'Thu', success: 1420, error4xx: 12, error5xx: 2 },
+            { label: 'Fri', success: 1290, error4xx: 7, error5xx: 1 }, { label: 'Sat', success: 780, error4xx: 4, error5xx: 1 },
+            { label: 'Sun', success: 620, error4xx: 3, error5xx: 0 },
+          ],
+          '30d': [
+            { label: 'Jan 1', success: 1080, error4xx: 7, error5xx: 2 }, { label: 'Jan 2', success: 1150, error4xx: 8, error5xx: 1 },
+            { label: 'Jan 3', success: 1020, error4xx: 6, error5xx: 2 }, { label: 'Jan 4', success: 680, error4xx: 3, error5xx: 1 },
+            { label: 'Jan 5', success: 620, error4xx: 3, error5xx: 0 }, { label: 'Jan 6', success: 1100, error4xx: 7, error5xx: 2 },
+            { label: 'Jan 7', success: 1180, error4xx: 8, error5xx: 1 }, { label: 'Jan 8', success: 1220, error4xx: 9, error5xx: 3 },
+            { label: 'Jan 9', success: 1300, error4xx: 10, error5xx: 2 }, { label: 'Jan 10', success: 1150, error4xx: 8, error5xx: 1 },
+            { label: 'Jan 11', success: 700, error4xx: 4, error5xx: 1 }, { label: 'Jan 12', success: 640, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 13', success: 1080, error4xx: 7, error5xx: 2 }, { label: 'Jan 14', success: 1200, error4xx: 9, error5xx: 2 },
+            { label: 'Jan 15', success: 1280, error4xx: 10, error5xx: 3 }, { label: 'Jan 16', success: 1160, error4xx: 8, error5xx: 1 },
+            { label: 'Jan 17', success: 1320, error4xx: 11, error5xx: 2 }, { label: 'Jan 18', success: 720, error4xx: 4, error5xx: 1 },
+            { label: 'Jan 19', success: 660, error4xx: 3, error5xx: 0 }, { label: 'Jan 20', success: 1100, error4xx: 7, error5xx: 2 },
+            { label: 'Jan 21', success: 1240, error4xx: 9, error5xx: 2 }, { label: 'Jan 22', success: 1260, error4xx: 9, error5xx: 3 },
+            { label: 'Jan 23', success: 1140, error4xx: 8, error5xx: 1 }, { label: 'Jan 24', success: 1340, error4xx: 11, error5xx: 3 },
+            { label: 'Jan 25', success: 700, error4xx: 4, error5xx: 1 }, { label: 'Jan 26', success: 620, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 27', success: 1060, error4xx: 7, error5xx: 2 }, { label: 'Jan 28', success: 1190, error4xx: 8, error5xx: 2 },
+            { label: 'Jan 29', success: 1300, error4xx: 10, error5xx: 3 }, { label: 'Jan 30', success: 1180, error4xx: 8, error5xx: 2 },
+          ],
+        },
+        responseTime: {
+          '24h': [
+            { label: '00:00', avg: 210, p95: 380 }, { label: '02:00', avg: 195, p95: 350 },
+            { label: '04:00', avg: 188, p95: 340 }, { label: '06:00', avg: 215, p95: 390 },
+            { label: '08:00', avg: 242, p95: 440 }, { label: '10:00', avg: 268, p95: 485 },
+            { label: '12:00', avg: 255, p95: 460 }, { label: '14:00', avg: 272, p95: 495 },
+            { label: '16:00', avg: 248, p95: 450 }, { label: '18:00', avg: 230, p95: 415 },
+            { label: '20:00', avg: 218, p95: 395 }, { label: '22:00', avg: 205, p95: 370 },
+          ],
+          '7d': [
+            { label: 'Mon', avg: 228, p95: 412 }, { label: 'Tue', avg: 241, p95: 435 },
+            { label: 'Wed', avg: 235, p95: 420 }, { label: 'Thu', avg: 252, p95: 458 },
+            { label: 'Fri', avg: 230, p95: 408 }, { label: 'Sat', avg: 218, p95: 385 },
+            { label: 'Sun', avg: 210, p95: 370 },
+          ],
+          '30d': [
+            { label: 'Jan 1', avg: 225, p95: 408 }, { label: 'Jan 2', avg: 232, p95: 420 },
+            { label: 'Jan 3', avg: 228, p95: 412 }, { label: 'Jan 4', avg: 210, p95: 380 },
+            { label: 'Jan 5', avg: 205, p95: 370 }, { label: 'Jan 6', avg: 238, p95: 430 },
+            { label: 'Jan 7', avg: 245, p95: 442 }, { label: 'Jan 8', avg: 250, p95: 455 },
+            { label: 'Jan 9', avg: 258, p95: 468 }, { label: 'Jan 10', avg: 240, p95: 435 },
+            { label: 'Jan 11', avg: 215, p95: 388 }, { label: 'Jan 12', avg: 208, p95: 375 },
+            { label: 'Jan 13', avg: 235, p95: 425 }, { label: 'Jan 14', avg: 248, p95: 450 },
+            { label: 'Jan 15', avg: 255, p95: 462 }, { label: 'Jan 16', avg: 242, p95: 438 },
+            { label: 'Jan 17', avg: 260, p95: 472 }, { label: 'Jan 18', avg: 218, p95: 392 },
+            { label: 'Jan 19', avg: 210, p95: 378 }, { label: 'Jan 20', avg: 238, p95: 428 },
+            { label: 'Jan 21', avg: 248, p95: 448 }, { label: 'Jan 22', avg: 252, p95: 458 },
+            { label: 'Jan 23', avg: 240, p95: 432 }, { label: 'Jan 24', avg: 262, p95: 475 },
+            { label: 'Jan 25', avg: 216, p95: 390 }, { label: 'Jan 26', avg: 206, p95: 372 },
+            { label: 'Jan 27', avg: 232, p95: 418 }, { label: 'Jan 28', avg: 245, p95: 445 },
+            { label: 'Jan 29', avg: 256, p95: 465 }, { label: 'Jan 30', avg: 242, p95: 438 },
+          ],
+        },
+        endpointUsage: [
+          { endpoint: '/api/v1/nlp-query', callCount: 1102, avgResponseTime: '234ms', successRate: 99.3 },
+          { endpoint: '/api/v1/kgql', callCount: 152, avgResponseTime: '189ms', successRate: 98.7 },
+          { endpoint: '/api/v1/alerts/check', callCount: 30, avgResponseTime: '142ms', successRate: 100 },
+        ],
+        recentErrors: [
+          { timestamp: '14:12:05', endpoint: '/api/v1/nlp-query', statusCode: 502, errorMessage: 'Upstream service unavailable' },
+          { timestamp: '13:18:55', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Internal model error' },
+          { timestamp: '12:04:18', endpoint: '/api/v1/kgql', statusCode: 422, errorMessage: 'Invalid query syntax' },
+          { timestamp: '11:45:32', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Database connection timeout' },
+          { timestamp: '10:22:41', endpoint: '/api/v1/nlp-query', statusCode: 504, errorMessage: 'Gateway timeout' },
+          { timestamp: '09:58:14', endpoint: '/api/v1/kgql', statusCode: 400, errorMessage: 'Malformed KGQL query' },
+          { timestamp: '08:34:27', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Query execution timeout' },
+          { timestamp: '07:12:53', endpoint: '/api/v1/nlp-query', statusCode: 429, errorMessage: 'Rate limit exceeded' },
+          { timestamp: '06:48:09', endpoint: '/api/v1/alerts/check', statusCode: 503, errorMessage: 'Service temporarily unavailable' },
+          { timestamp: '05:21:36', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Internal server error' },
+        ],
+        apiKeyUsage: [
+          { keyName: 'prod-sales-key-1', usageCount: 1180, lastUsed: '2 min ago', status: 'active' },
+          { keyName: 'staging-sales-key', usageCount: 104, lastUsed: '3 days ago', status: 'active' },
+        ],
+      },
+      'agent-002': {
+        description: 'Provides automated responses for customer support tickets and live chat.',
+        kpis: {
+          '24h': { totalRequests: 892, successRate: 98.7, avgResponseTime: 312, errorCount: 12, changes: { totalRequests: -3.2, successRate: -0.5, avgResponseTime: 8.1, errorCount: 25.0 } },
+          '7d': { totalRequests: 6240, successRate: 98.4, avgResponseTime: 298, errorCount: 100, changes: { totalRequests: 4.5, successRate: -0.3, avgResponseTime: 5.2, errorCount: 18.6 } },
+          '30d': { totalRequests: 26800, successRate: 98.1, avgResponseTime: 305, errorCount: 509, changes: { totalRequests: 10.8, successRate: -0.6, avgResponseTime: 9.4, errorCount: 28.3 } },
+        },
+        requestVolume: {
+          '24h': [
+            { label: '00:00', success: 22, error4xx: 1, error5xx: 0 }, { label: '02:00', success: 10, error4xx: 0, error5xx: 0 },
+            { label: '04:00', success: 8, error4xx: 0, error5xx: 0 }, { label: '06:00', success: 28, error4xx: 1, error5xx: 0 },
+            { label: '08:00', success: 78, error4xx: 2, error5xx: 1 }, { label: '10:00', success: 112, error4xx: 3, error5xx: 1 },
+            { label: '12:00', success: 105, error4xx: 2, error5xx: 0 }, { label: '14:00', success: 118, error4xx: 3, error5xx: 1 },
+            { label: '16:00', success: 108, error4xx: 2, error5xx: 0 }, { label: '18:00', success: 82, error4xx: 1, error5xx: 0 },
+            { label: '20:00', success: 55, error4xx: 1, error5xx: 0 }, { label: '22:00', success: 38, error4xx: 0, error5xx: 0 },
+          ],
+          '7d': [
+            { label: 'Mon', success: 880, error4xx: 12, error5xx: 4 }, { label: 'Tue', success: 950, error4xx: 14, error5xx: 3 },
+            { label: 'Wed', success: 920, error4xx: 13, error5xx: 5 }, { label: 'Thu', success: 1010, error4xx: 16, error5xx: 4 },
+            { label: 'Fri', success: 890, error4xx: 11, error5xx: 3 }, { label: 'Sat', success: 520, error4xx: 6, error5xx: 2 },
+            { label: 'Sun', success: 460, error4xx: 5, error5xx: 1 },
+          ],
+          '30d': [
+            { label: 'Jan 1', success: 820, error4xx: 10, error5xx: 3 }, { label: 'Jan 5', success: 480, error4xx: 5, error5xx: 1 },
+            { label: 'Jan 10', success: 900, error4xx: 12, error5xx: 3 }, { label: 'Jan 15', success: 980, error4xx: 14, error5xx: 4 },
+            { label: 'Jan 20', success: 870, error4xx: 11, error5xx: 3 }, { label: 'Jan 25', success: 510, error4xx: 6, error5xx: 2 },
+            { label: 'Jan 30', success: 920, error4xx: 13, error5xx: 4 },
+          ],
+        },
+        responseTime: {
+          '24h': [
+            { label: '00:00', avg: 285, p95: 520 }, { label: '02:00', avg: 270, p95: 490 },
+            { label: '04:00', avg: 260, p95: 475 }, { label: '06:00', avg: 290, p95: 530 },
+            { label: '08:00', avg: 325, p95: 590 }, { label: '10:00', avg: 348, p95: 635 },
+            { label: '12:00', avg: 335, p95: 610 }, { label: '14:00', avg: 355, p95: 645 },
+            { label: '16:00', avg: 330, p95: 600 }, { label: '18:00', avg: 310, p95: 565 },
+            { label: '20:00', avg: 295, p95: 538 }, { label: '22:00', avg: 278, p95: 505 },
+          ],
+          '7d': [
+            { label: 'Mon', avg: 295, p95: 538 }, { label: 'Tue', avg: 308, p95: 562 },
+            { label: 'Wed', avg: 302, p95: 550 }, { label: 'Thu', avg: 318, p95: 580 },
+            { label: 'Fri', avg: 292, p95: 532 }, { label: 'Sat', avg: 275, p95: 500 },
+            { label: 'Sun', avg: 268, p95: 488 },
+          ],
+          '30d': [
+            { label: 'Jan 1', avg: 290, p95: 530 }, { label: 'Jan 5', avg: 268, p95: 488 },
+            { label: 'Jan 10', avg: 305, p95: 555 }, { label: 'Jan 15', avg: 320, p95: 582 },
+            { label: 'Jan 20', avg: 298, p95: 542 }, { label: 'Jan 25', avg: 278, p95: 505 },
+            { label: 'Jan 30', avg: 310, p95: 565 },
+          ],
+        },
+        endpointUsage: [
+          { endpoint: '/api/v1/nlp-query', callCount: 812, avgResponseTime: '312ms', successRate: 98.5 },
+          { endpoint: '/api/v1/kgql', callCount: 65, avgResponseTime: '245ms', successRate: 99.2 },
+          { endpoint: '/api/v1/alerts/check', callCount: 15, avgResponseTime: '168ms', successRate: 100 },
+        ],
+        recentErrors: [
+          { timestamp: '14:21:32', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Database connection timeout' },
+          { timestamp: '13:45:19', endpoint: '/api/v1/nlp-query', statusCode: 422, errorMessage: 'Invalid query syntax' },
+          { timestamp: '12:38:14', endpoint: '/api/v1/nlp-query', statusCode: 429, errorMessage: 'Rate limit exceeded' },
+          { timestamp: '11:52:08', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Internal model error' },
+          { timestamp: '10:18:45', endpoint: '/api/v1/kgql', statusCode: 400, errorMessage: 'Malformed KGQL query' },
+          { timestamp: '09:34:21', endpoint: '/api/v1/nlp-query', statusCode: 504, errorMessage: 'Gateway timeout' },
+          { timestamp: '08:12:56', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Query execution timeout' },
+          { timestamp: '07:48:33', endpoint: '/api/v1/nlp-query', statusCode: 429, errorMessage: 'Rate limit exceeded' },
+          { timestamp: '06:25:17', endpoint: '/api/v1/alerts/check', statusCode: 503, errorMessage: 'Service temporarily unavailable' },
+          { timestamp: '05:08:42', endpoint: '/api/v1/nlp-query', statusCode: 502, errorMessage: 'Upstream service unavailable' },
+        ],
+        apiKeyUsage: [
+          { keyName: 'prod-support-key-1', usageCount: 845, lastUsed: '5 min ago', status: 'active' },
+          { keyName: 'prod-support-key-2', usageCount: 47, lastUsed: '1 hour ago', status: 'active' },
+        ],
+      },
+      'agent-003': {
+        description: 'Manages ETL pipelines and data transformation workflows.',
+        kpis: {
+          '24h': { totalRequests: 2341, successRate: 99.8, avgResponseTime: 189, errorCount: 5, changes: { totalRequests: 18.4, successRate: 0.2, avgResponseTime: -8.1, errorCount: -40.0 } },
+          '7d': { totalRequests: 14200, successRate: 99.7, avgResponseTime: 195, errorCount: 43, changes: { totalRequests: 12.1, successRate: 0.1, avgResponseTime: -3.2, errorCount: -15.7 } },
+          '30d': { totalRequests: 62400, successRate: 99.5, avgResponseTime: 201, errorCount: 312, changes: { totalRequests: 15.8, successRate: -0.1, avgResponseTime: 2.8, errorCount: 8.4 } },
+        },
+        requestVolume: {
+          '24h': [
+            { label: '00:00', success: 95, error4xx: 0, error5xx: 0 }, { label: '02:00', success: 88, error4xx: 0, error5xx: 0 },
+            { label: '04:00', success: 82, error4xx: 0, error5xx: 0 }, { label: '06:00', success: 105, error4xx: 0, error5xx: 0 },
+            { label: '08:00', success: 198, error4xx: 1, error5xx: 0 }, { label: '10:00', success: 245, error4xx: 1, error5xx: 1 },
+            { label: '12:00', success: 232, error4xx: 1, error5xx: 0 }, { label: '14:00', success: 258, error4xx: 1, error5xx: 0 },
+            { label: '16:00', success: 240, error4xx: 1, error5xx: 0 }, { label: '18:00', success: 195, error4xx: 0, error5xx: 0 },
+            { label: '20:00', success: 142, error4xx: 0, error5xx: 0 }, { label: '22:00', success: 108, error4xx: 0, error5xx: 0 },
+          ],
+          '7d': [
+            { label: 'Mon', success: 2050, error4xx: 5, error5xx: 1 }, { label: 'Tue', success: 2180, error4xx: 6, error5xx: 2 },
+            { label: 'Wed', success: 2100, error4xx: 5, error5xx: 1 }, { label: 'Thu', success: 2280, error4xx: 7, error5xx: 2 },
+            { label: 'Fri', success: 2050, error4xx: 5, error5xx: 1 }, { label: 'Sat', success: 1420, error4xx: 3, error5xx: 0 },
+            { label: 'Sun', success: 1280, error4xx: 2, error5xx: 0 },
+          ],
+          '30d': [
+            { label: 'Jan 1', success: 1900, error4xx: 5, error5xx: 1 }, { label: 'Jan 5', success: 1350, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 10', success: 2100, error4xx: 6, error5xx: 1 }, { label: 'Jan 15', success: 2250, error4xx: 7, error5xx: 2 },
+            { label: 'Jan 20', success: 2050, error4xx: 5, error5xx: 1 }, { label: 'Jan 25', success: 1450, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 30', success: 2150, error4xx: 6, error5xx: 1 },
+          ],
+        },
+        responseTime: {
+          '24h': [
+            { label: '00:00', avg: 172, p95: 310 }, { label: '02:00', avg: 165, p95: 298 },
+            { label: '04:00', avg: 160, p95: 290 }, { label: '06:00', avg: 178, p95: 320 },
+            { label: '08:00', avg: 195, p95: 352 }, { label: '10:00', avg: 212, p95: 382 },
+            { label: '12:00', avg: 205, p95: 370 }, { label: '14:00', avg: 218, p95: 395 },
+            { label: '16:00', avg: 200, p95: 362 }, { label: '18:00', avg: 188, p95: 340 },
+            { label: '20:00', avg: 178, p95: 320 }, { label: '22:00', avg: 170, p95: 308 },
+          ],
+          '7d': [
+            { label: 'Mon', avg: 185, p95: 335 }, { label: 'Tue', avg: 192, p95: 348 },
+            { label: 'Wed', avg: 188, p95: 340 }, { label: 'Thu', avg: 198, p95: 358 },
+            { label: 'Fri', avg: 186, p95: 336 }, { label: 'Sat', avg: 175, p95: 315 },
+            { label: 'Sun', avg: 170, p95: 308 },
+          ],
+          '30d': [
+            { label: 'Jan 1', avg: 182, p95: 330 }, { label: 'Jan 5', avg: 170, p95: 308 },
+            { label: 'Jan 10', avg: 195, p95: 352 }, { label: 'Jan 15', avg: 205, p95: 370 },
+            { label: 'Jan 20', avg: 190, p95: 342 }, { label: 'Jan 25', avg: 175, p95: 315 },
+            { label: 'Jan 30', avg: 198, p95: 358 },
+          ],
+        },
+        endpointUsage: [
+          { endpoint: '/api/v1/kgql', callCount: 1850, avgResponseTime: '178ms', successRate: 99.9 },
+          { endpoint: '/api/v1/nlp-query', callCount: 420, avgResponseTime: '215ms', successRate: 99.5 },
+          { endpoint: '/api/v1/alerts/check', callCount: 71, avgResponseTime: '125ms', successRate: 100 },
+        ],
+        recentErrors: [
+          { timestamp: '13:58:41', endpoint: '/api/v1/kgql', statusCode: 500, errorMessage: 'Query execution timeout' },
+          { timestamp: '13:05:42', endpoint: '/api/v1/kgql', statusCode: 400, errorMessage: 'Malformed KGQL query' },
+          { timestamp: '10:42:18', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Internal model error' },
+          { timestamp: '08:15:33', endpoint: '/api/v1/kgql', statusCode: 422, errorMessage: 'Invalid query syntax' },
+          { timestamp: '05:48:21', endpoint: '/api/v1/kgql', statusCode: 500, errorMessage: 'Database connection timeout' },
+        ],
+        apiKeyUsage: [
+          { keyName: 'prod-pipeline-key', usageCount: 2280, lastUsed: '30 sec ago', status: 'active' },
+          { keyName: 'dev-pipeline-key', usageCount: 61, lastUsed: '2 days ago', status: 'active' },
+        ],
+      },
+      'agent-004': {
+        description: 'Continuously monitors systems for anomalies and triggers alerts.',
+        kpis: {
+          '24h': { totalRequests: 4521, successRate: 100, avgResponseTime: 95, errorCount: 0, changes: { totalRequests: 22.1, successRate: 0.0, avgResponseTime: -12.5, errorCount: -100.0 } },
+          '7d': { totalRequests: 28400, successRate: 99.9, avgResponseTime: 102, errorCount: 28, changes: { totalRequests: 15.3, successRate: 0.1, avgResponseTime: -5.8, errorCount: -22.2 } },
+          '30d': { totalRequests: 118500, successRate: 99.8, avgResponseTime: 108, errorCount: 237, changes: { totalRequests: 18.9, successRate: 0.0, avgResponseTime: 1.2, errorCount: 5.3 } },
+        },
+        requestVolume: {
+          '24h': [
+            { label: '00:00', success: 185, error4xx: 0, error5xx: 0 }, { label: '02:00', success: 180, error4xx: 0, error5xx: 0 },
+            { label: '04:00', success: 178, error4xx: 0, error5xx: 0 }, { label: '06:00', success: 190, error4xx: 0, error5xx: 0 },
+            { label: '08:00', success: 385, error4xx: 0, error5xx: 0 }, { label: '10:00', success: 420, error4xx: 0, error5xx: 0 },
+            { label: '12:00', success: 410, error4xx: 0, error5xx: 0 }, { label: '14:00', success: 435, error4xx: 0, error5xx: 0 },
+            { label: '16:00', success: 415, error4xx: 0, error5xx: 0 }, { label: '18:00', success: 380, error4xx: 0, error5xx: 0 },
+            { label: '20:00', success: 345, error4xx: 0, error5xx: 0 }, { label: '22:00', success: 195, error4xx: 0, error5xx: 0 },
+          ],
+          '7d': [
+            { label: 'Mon', success: 4100, error4xx: 5, error5xx: 0 }, { label: 'Tue', success: 4250, error4xx: 4, error5xx: 1 },
+            { label: 'Wed', success: 4180, error4xx: 5, error5xx: 0 }, { label: 'Thu', success: 4320, error4xx: 6, error5xx: 1 },
+            { label: 'Fri', success: 4050, error4xx: 4, error5xx: 0 }, { label: 'Sat', success: 3800, error4xx: 3, error5xx: 0 },
+            { label: 'Sun', success: 3650, error4xx: 2, error5xx: 0 },
+          ],
+          '30d': [
+            { label: 'Jan 1', success: 3800, error4xx: 4, error5xx: 0 }, { label: 'Jan 5', success: 3600, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 10', success: 4100, error4xx: 5, error5xx: 1 }, { label: 'Jan 15', success: 4300, error4xx: 6, error5xx: 1 },
+            { label: 'Jan 20', success: 4050, error4xx: 4, error5xx: 0 }, { label: 'Jan 25', success: 3750, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 30', success: 4200, error4xx: 5, error5xx: 1 },
+          ],
+        },
+        responseTime: {
+          '24h': [
+            { label: '00:00', avg: 82, p95: 148 }, { label: '02:00', avg: 78, p95: 140 },
+            { label: '04:00', avg: 75, p95: 135 }, { label: '06:00', avg: 85, p95: 152 },
+            { label: '08:00', avg: 98, p95: 178 }, { label: '10:00', avg: 108, p95: 195 },
+            { label: '12:00', avg: 105, p95: 190 }, { label: '14:00', avg: 112, p95: 202 },
+            { label: '16:00', avg: 102, p95: 185 }, { label: '18:00', avg: 92, p95: 168 },
+            { label: '20:00', avg: 88, p95: 158 }, { label: '22:00', avg: 80, p95: 145 },
+          ],
+          '7d': [
+            { label: 'Mon', avg: 95, p95: 172 }, { label: 'Tue', avg: 102, p95: 185 },
+            { label: 'Wed', avg: 98, p95: 178 }, { label: 'Thu', avg: 108, p95: 195 },
+            { label: 'Fri', avg: 96, p95: 174 }, { label: 'Sat', avg: 88, p95: 160 },
+            { label: 'Sun', avg: 85, p95: 154 },
+          ],
+          '30d': [
+            { label: 'Jan 1', avg: 92, p95: 168 }, { label: 'Jan 5', avg: 85, p95: 155 },
+            { label: 'Jan 10', avg: 100, p95: 182 }, { label: 'Jan 15', avg: 110, p95: 198 },
+            { label: 'Jan 20', avg: 98, p95: 178 }, { label: 'Jan 25', avg: 88, p95: 160 },
+            { label: 'Jan 30', avg: 105, p95: 190 },
+          ],
+        },
+        endpointUsage: [
+          { endpoint: '/api/v1/alerts/check', callCount: 3850, avgResponseTime: '85ms', successRate: 100 },
+          { endpoint: '/api/v1/kgql', callCount: 580, avgResponseTime: '112ms', successRate: 99.8 },
+          { endpoint: '/api/v1/nlp-query', callCount: 91, avgResponseTime: '165ms', successRate: 99.5 },
+        ],
+        recentErrors: [
+          { timestamp: '13:32:08', endpoint: '/api/v1/alerts/check', statusCode: 503, errorMessage: 'Service temporarily unavailable' },
+          { timestamp: '08:45:22', endpoint: '/api/v1/kgql', statusCode: 500, errorMessage: 'Query execution timeout' },
+          { timestamp: '02:18:45', endpoint: '/api/v1/kgql', statusCode: 422, errorMessage: 'Invalid query syntax' },
+        ],
+        apiKeyUsage: [
+          { keyName: 'prod-monitor-key', usageCount: 4450, lastUsed: '10 sec ago', status: 'active' },
+          { keyName: 'backup-monitor-key', usageCount: 71, lastUsed: '6 hours ago', status: 'active' },
+          { keyName: 'legacy-monitor-key', usageCount: 0, lastUsed: '45 days ago', status: 'revoked' },
+        ],
+      },
+      'agent-005': {
+        description: 'Assists research teams with literature search and data analysis queries.',
+        kpis: {
+          '24h': { totalRequests: 156, successRate: 99.5, avgResponseTime: 420, errorCount: 1, changes: { totalRequests: -15.2, successRate: 0.8, avgResponseTime: -10.5, errorCount: -50.0 } },
+          '7d': { totalRequests: 1160, successRate: 99.2, avgResponseTime: 435, errorCount: 9, changes: { totalRequests: -8.4, successRate: 0.4, avgResponseTime: -6.2, errorCount: -30.8 } },
+          '30d': { totalRequests: 4600, successRate: 98.9, avgResponseTime: 448, errorCount: 51, changes: { totalRequests: 5.2, successRate: -0.2, avgResponseTime: 3.8, errorCount: 12.5 } },
+        },
+        requestVolume: {
+          '24h': [
+            { label: '00:00', success: 2, error4xx: 0, error5xx: 0 }, { label: '02:00', success: 0, error4xx: 0, error5xx: 0 },
+            { label: '04:00', success: 0, error4xx: 0, error5xx: 0 }, { label: '06:00', success: 5, error4xx: 0, error5xx: 0 },
+            { label: '08:00', success: 15, error4xx: 0, error5xx: 0 }, { label: '10:00', success: 28, error4xx: 1, error5xx: 0 },
+            { label: '12:00', success: 22, error4xx: 0, error5xx: 0 }, { label: '14:00', success: 32, error4xx: 0, error5xx: 0 },
+            { label: '16:00', success: 25, error4xx: 0, error5xx: 0 }, { label: '18:00', success: 15, error4xx: 0, error5xx: 0 },
+            { label: '20:00', success: 8, error4xx: 0, error5xx: 0 }, { label: '22:00', success: 4, error4xx: 0, error5xx: 0 },
+          ],
+          '7d': [
+            { label: 'Mon', success: 180, error4xx: 2, error5xx: 0 }, { label: 'Tue', success: 195, error4xx: 2, error5xx: 1 },
+            { label: 'Wed', success: 185, error4xx: 1, error5xx: 0 }, { label: 'Thu', success: 205, error4xx: 3, error5xx: 0 },
+            { label: 'Fri', success: 175, error4xx: 1, error5xx: 0 }, { label: 'Sat', success: 65, error4xx: 0, error5xx: 0 },
+            { label: 'Sun', success: 48, error4xx: 0, error5xx: 0 },
+          ],
+          '30d': [
+            { label: 'Jan 1', success: 165, error4xx: 2, error5xx: 0 }, { label: 'Jan 5', success: 55, error4xx: 0, error5xx: 0 },
+            { label: 'Jan 10', success: 180, error4xx: 2, error5xx: 1 }, { label: 'Jan 15', success: 200, error4xx: 3, error5xx: 0 },
+            { label: 'Jan 20', success: 170, error4xx: 1, error5xx: 0 }, { label: 'Jan 25', success: 60, error4xx: 0, error5xx: 0 },
+            { label: 'Jan 30', success: 185, error4xx: 2, error5xx: 1 },
+          ],
+        },
+        responseTime: {
+          '24h': [
+            { label: '00:00', avg: 380, p95: 685 }, { label: '02:00', avg: 365, p95: 658 },
+            { label: '04:00', avg: 350, p95: 630 }, { label: '06:00', avg: 395, p95: 712 },
+            { label: '08:00', avg: 425, p95: 768 }, { label: '10:00', avg: 455, p95: 820 },
+            { label: '12:00', avg: 440, p95: 795 }, { label: '14:00', avg: 468, p95: 845 },
+            { label: '16:00', avg: 435, p95: 785 }, { label: '18:00', avg: 410, p95: 740 },
+            { label: '20:00', avg: 392, p95: 708 }, { label: '22:00', avg: 375, p95: 678 },
+          ],
+          '7d': [
+            { label: 'Mon', avg: 420, p95: 758 }, { label: 'Tue', avg: 435, p95: 785 },
+            { label: 'Wed', avg: 428, p95: 772 }, { label: 'Thu', avg: 448, p95: 808 },
+            { label: 'Fri', avg: 422, p95: 762 }, { label: 'Sat', avg: 405, p95: 730 },
+            { label: 'Sun', avg: 395, p95: 712 },
+          ],
+          '30d': [
+            { label: 'Jan 1', avg: 415, p95: 748 }, { label: 'Jan 5', avg: 398, p95: 718 },
+            { label: 'Jan 10', avg: 440, p95: 795 }, { label: 'Jan 15', avg: 455, p95: 820 },
+            { label: 'Jan 20', avg: 430, p95: 775 }, { label: 'Jan 25', avg: 405, p95: 730 },
+            { label: 'Jan 30', avg: 445, p95: 802 },
+          ],
+        },
+        endpointUsage: [
+          { endpoint: '/api/v1/nlp-query', callCount: 142, avgResponseTime: '420ms', successRate: 99.3 },
+          { endpoint: '/api/v1/kgql', callCount: 12, avgResponseTime: '345ms', successRate: 100 },
+          { endpoint: '/api/v1/alerts/check', callCount: 2, avgResponseTime: '128ms', successRate: 100 },
+        ],
+        recentErrors: [
+          { timestamp: '14:18:22', endpoint: '/api/v1/nlp-query', statusCode: 429, errorMessage: 'Rate limit exceeded' },
+          { timestamp: '12:52:31', endpoint: '/api/v1/nlp-query', statusCode: 504, errorMessage: 'Gateway timeout' },
+          { timestamp: '09:15:48', endpoint: '/api/v1/nlp-query', statusCode: 500, errorMessage: 'Internal model error' },
+        ],
+        apiKeyUsage: [
+          { keyName: 'prod-research-key', usageCount: 148, lastUsed: '22 min ago', status: 'active' },
+          { keyName: 'trial-research-key', usageCount: 8, lastUsed: '12 days ago', status: 'expired' },
+        ],
+      },
+      'agent-006': {
+        description: 'Aggregates and formats compliance reporting data from multiple sources.',
+        kpis: {
+          '24h': { totalRequests: 0, successRate: 0, avgResponseTime: 0, errorCount: 0, changes: { totalRequests: 0, successRate: 0, avgResponseTime: 0, errorCount: 0 } },
+          '7d': { totalRequests: 0, successRate: 0, avgResponseTime: 0, errorCount: 0, changes: { totalRequests: 0, successRate: 0, avgResponseTime: 0, errorCount: 0 } },
+          '30d': { totalRequests: 450, successRate: 97.8, avgResponseTime: 380, errorCount: 10, changes: { totalRequests: -82.5, successRate: -1.2, avgResponseTime: 15.2, errorCount: 42.9 } },
+        },
+        requestVolume: {
+          '24h': [], '7d': [],
+          '30d': [
+            { label: 'Jan 1', success: 85, error4xx: 2, error5xx: 1 }, { label: 'Jan 5', success: 72, error4xx: 1, error5xx: 0 },
+            { label: 'Jan 10', success: 90, error4xx: 2, error5xx: 1 }, { label: 'Jan 15', success: 68, error4xx: 1, error5xx: 1 },
+            { label: 'Jan 20', success: 45, error4xx: 1, error5xx: 0 }, { label: 'Jan 25', success: 0, error4xx: 0, error5xx: 0 },
+            { label: 'Jan 30', success: 0, error4xx: 0, error5xx: 0 },
+          ],
+        },
+        responseTime: {
+          '24h': [], '7d': [],
+          '30d': [
+            { label: 'Jan 1', avg: 365, p95: 660 }, { label: 'Jan 5', avg: 350, p95: 630 },
+            { label: 'Jan 10', avg: 385, p95: 695 }, { label: 'Jan 15', avg: 398, p95: 718 },
+            { label: 'Jan 20', avg: 375, p95: 678 }, { label: 'Jan 25', avg: 0, p95: 0 },
+            { label: 'Jan 30', avg: 0, p95: 0 },
+          ],
+        },
+        endpointUsage: [
+          { endpoint: '/api/v1/kgql', callCount: 380, avgResponseTime: '365ms', successRate: 97.9 },
+          { endpoint: '/api/v1/nlp-query', callCount: 62, avgResponseTime: '410ms', successRate: 97.2 },
+          { endpoint: '/api/v1/alerts/check', callCount: 8, avgResponseTime: '145ms', successRate: 100 },
+        ],
+        recentErrors: [
+          { timestamp: 'Jan 20 16:42', endpoint: '/api/v1/kgql', statusCode: 500, errorMessage: 'Database connection timeout' },
+          { timestamp: 'Jan 20 14:18', endpoint: '/api/v1/nlp-query', statusCode: 422, errorMessage: 'Invalid query syntax' },
+          { timestamp: 'Jan 19 09:55', endpoint: '/api/v1/kgql', statusCode: 500, errorMessage: 'Query execution timeout' },
+          { timestamp: 'Jan 18 11:32', endpoint: '/api/v1/kgql', statusCode: 400, errorMessage: 'Malformed KGQL query' },
+          { timestamp: 'Jan 15 08:21', endpoint: '/api/v1/nlp-query', statusCode: 504, errorMessage: 'Gateway timeout' },
+        ],
+        apiKeyUsage: [
+          { keyName: 'prod-compliance-key', usageCount: 442, lastUsed: '27 days ago', status: 'active' },
+          { keyName: 'audit-compliance-key', usageCount: 8, lastUsed: '30 days ago', status: 'expired' },
+        ],
+      },
+    },
   };
 
   const traces = [
@@ -891,6 +1391,7 @@ const AgentAnalyticsV2 = () => {
 
   const navItems = [
     { id: 'overview', label: 'Overview' },
+    { id: 'overview-np', label: 'Overview (No Pricing)' },
     { id: 'agents', label: 'Agents' },
     { id: 'costs', label: 'Costs' },
     { id: 'traces', label: 'Traces' },
@@ -965,6 +1466,8 @@ const AgentAnalyticsV2 = () => {
               onClick={() => {
                 setActiveSection(item.id);
                 setSelectedAgentForCosts(null);
+                setSelectedAgentForOverviewNP(null);
+                setOverviewNPTimePeriod('7d');
               }}
               style={{
                 display: 'block',
@@ -1024,9 +1527,27 @@ const AgentAnalyticsV2 = () => {
               {activeSection === 'costs' && !selectedAgentForCosts && 'Cost Analysis'}
               {activeSection === 'costs' && selectedAgentForCosts && `${selectedAgentForCosts.name} - Cost Breakdown`}
               {activeSection === 'traces' && 'Query Traces'}
+              {activeSection === 'overview-np' && !selectedAgentForOverviewNP && 'Overview'}
+              {activeSection === 'overview-np' && selectedAgentForOverviewNP && `${selectedAgentForOverviewNP.name} - Details`}
             </h1>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
+            {activeSection === 'overview-np' && selectedAgentForOverviewNP && (
+              <button
+                onClick={() => setSelectedAgentForOverviewNP(null)}
+                style={{
+                  padding: '8px 14px',
+                  background: '#1a1d23',
+                  border: '1px solid #2d333b',
+                  borderRadius: '6px',
+                  color: '#9ca3af',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit'
+                }}
+              >← Back to Overview</button>
+            )}
             {activeSection === 'costs' && selectedAgentForCosts && (
               <button 
                 onClick={() => setSelectedAgentForCosts(null)}
@@ -1075,7 +1596,7 @@ const AgentAnalyticsV2 = () => {
                 >+ Register Agent</button>
               </>
             )}
-            {activeSection !== 'agents' && !selectedAgentForCosts && (
+            {activeSection !== 'agents' && activeSection !== 'overview-np' && !selectedAgentForCosts && !selectedAgentForOverviewNP && (
               <>
                 <select style={{
                   padding: '8px 12px',
@@ -1278,6 +1799,429 @@ const AgentAnalyticsV2 = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </>
+          )}
+
+          {/* OVERVIEW (NO PRICING) TAB — Tenant Overview */}
+          {activeSection === 'overview-np' && !selectedAgentForOverviewNP && (
+            <>
+              {/* Time Period Selector */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                {['24h', '7d', '30d'].map(period => (
+                  <button
+                    key={period}
+                    onClick={() => setOverviewNPTimePeriod(period)}
+                    style={{
+                      padding: '8px 16px',
+                      background: overviewNPTimePeriod === period ? '#3b82f6' : '#1a1d23',
+                      border: `1px solid ${overviewNPTimePeriod === period ? '#3b82f6' : '#2d333b'}`,
+                      borderRadius: '6px',
+                      color: overviewNPTimePeriod === period ? '#fff' : '#9ca3af',
+                      fontSize: '13px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
+                  >{period}</button>
+                ))}
+              </div>
+
+              {/* KPI Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+                {(() => {
+                  const kpis = overviewNPData.kpis[overviewNPTimePeriod];
+                  const items = [
+                    { label: 'Total Requests', value: kpis.totalRequests.toLocaleString(), change: kpis.changes.totalRequests },
+                    { label: 'Success Rate', value: `${kpis.successRate}%`, change: kpis.changes.successRate },
+                    { label: 'Avg Response Time', value: `${kpis.avgResponseTime}ms`, change: kpis.changes.avgResponseTime, invertColor: true },
+                    { label: 'Error Count', value: kpis.errorCount.toLocaleString(), change: kpis.changes.errorCount, invertColor: true },
+                  ];
+                  return items.map((item, idx) => {
+                    const isPositive = item.invertColor ? item.change < 0 : item.change > 0;
+                    return (
+                      <div key={idx} style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f' }}>
+                        <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 8px' }}>{item.label}</p>
+                        <p style={{ fontSize: '28px', fontWeight: 600, margin: '0 0 4px' }}>{item.value}</p>
+                        <p style={{ fontSize: '12px', color: isPositive ? '#22c55e' : '#ef4444', margin: 0 }}>
+                          {item.change > 0 ? '+' : ''}{item.change}% vs prev period
+                        </p>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+
+              {/* Request Volume Over Time — Stacked Bar Chart */}
+              <div style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>Request Volume Over Time</h3>
+                  <div style={{ display: 'flex', gap: '16px' }}>
+                    {[{ label: 'Success', color: '#22c55e' }, { label: '4xx', color: '#eab308' }, { label: '5xx', color: '#ef4444' }].map(item => (
+                      <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ width: '12px', height: '12px', background: item.color, borderRadius: '2px' }} />
+                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ height: '280px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={overviewNPData.requestVolume[overviewNPTimePeriod]} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#23272f" />
+                      <XAxis dataKey="label" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={{ stroke: '#23272f' }} tickLine={false} />
+                      <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={{ stroke: '#23272f' }} tickLine={false} />
+                      <RechartsTooltip contentStyle={{ backgroundColor: '#1a1d23', border: '1px solid #23272f', borderRadius: '8px', color: '#e4e4e7', fontSize: '12px' }} />
+                      <Bar dataKey="success" name="Success" stackId="a" fill="#22c55e" />
+                      <Bar dataKey="error4xx" name="4xx" stackId="a" fill="#eab308" />
+                      <Bar dataKey="error5xx" name="5xx" stackId="a" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Two-column: Top Agents + Recent Errors */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '16px' }}>
+                {/* Top Agents */}
+                <div style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 16px' }}>Top Agents</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {overviewNPData.topAgents.map((agent) => {
+                      const maxRequests = overviewNPData.topAgents[0].requests;
+                      return (
+                        <div
+                          key={agent.agentId}
+                          onClick={() => {
+                            const detail = overviewNPData.agentDetails[agent.agentId];
+                            const regAgent = registeredAgents.find(a => a.id === agent.agentId);
+                            setSelectedAgentForOverviewNP({ ...agent, ...detail, ...regAgent });
+                          }}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <span style={{ fontSize: '13px' }}>{agent.name}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '12px', color: '#9ca3af' }}>{agent.requests.toLocaleString()}</span>
+                              <span style={{
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                fontSize: '10px',
+                                fontWeight: 500,
+                                background: agent.successRate >= 99.5 ? '#22c55e20' : agent.successRate >= 98 ? '#eab30820' : '#ef444420',
+                                color: agent.successRate >= 99.5 ? '#22c55e' : agent.successRate >= 98 ? '#eab308' : '#ef4444',
+                              }}>{agent.successRate}%</span>
+                            </div>
+                          </div>
+                          <div style={{ height: '6px', background: '#1a1d23', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{
+                              height: '100%',
+                              width: `${(agent.requests / maxRequests) * 100}%`,
+                              background: '#3b82f6',
+                              borderRadius: '3px',
+                              transition: 'width 0.3s ease'
+                            }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Recent Errors Table */}
+                <div style={{ background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', overflow: 'hidden' }}>
+                  <div style={{ padding: '20px 20px 0' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 16px' }}>Recent Errors</h3>
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#1a1d23' }}>
+                        <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Agent</th>
+                        <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Endpoint</th>
+                        <th style={{ textAlign: 'center', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
+                        <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Error</th>
+                        <th style={{ textAlign: 'right', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {overviewNPData.recentErrors.map((err, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #1a1d23' }}>
+                          <td style={{ padding: '10px 16px', fontSize: '13px' }}>{err.agentName}</td>
+                          <td style={{ padding: '10px 16px', fontSize: '12px', fontFamily: 'monospace', color: '#9ca3af' }}>{err.endpoint}</td>
+                          <td style={{ textAlign: 'center', padding: '10px 16px' }}>
+                            <span style={{
+                              padding: '2px 8px',
+                              borderRadius: '10px',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              background: err.statusCode >= 500 ? '#ef444420' : '#eab30820',
+                              color: err.statusCode >= 500 ? '#ef4444' : '#eab308',
+                            }}>{err.statusCode}</span>
+                          </td>
+                          <td style={{ padding: '10px 16px', fontSize: '12px', color: '#9ca3af' }}>{err.errorMessage}</td>
+                          <td style={{ textAlign: 'right', padding: '10px 16px', fontSize: '12px', color: '#6b7280' }}>{err.timestamp}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* OVERVIEW (NO PRICING) TAB — Agent Detail */}
+          {activeSection === 'overview-np' && selectedAgentForOverviewNP && (
+            <>
+              {/* Agent Header */}
+              <div style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h2 style={{ fontSize: '20px', fontWeight: 600, margin: '0 0 6px' }}>{selectedAgentForOverviewNP.name}</h2>
+                    <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 12px' }}>{selectedAgentForOverviewNP.description}</p>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                      {selectedAgentForOverviewNP.tags?.map((tag, idx) => (
+                        <span key={idx} style={{
+                          padding: '3px 10px',
+                          borderRadius: '12px',
+                          fontSize: '11px',
+                          fontWeight: 500,
+                          background: `${tag.color}20`,
+                          color: tag.color,
+                        }}>{tag.value}</span>
+                      ))}
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>
+                      {selectedAgentForOverviewNP.apiKeys?.length || 0} active keys · Last active {selectedAgentForOverviewNP.lastActive}
+                    </p>
+                  </div>
+                  <span style={{
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    background: selectedAgentForOverviewNP.status === 'enabled' ? '#22c55e20' : '#6b728020',
+                    color: selectedAgentForOverviewNP.status === 'enabled' ? '#22c55e' : '#6b7280',
+                  }}>{selectedAgentForOverviewNP.status === 'enabled' ? 'Active' : 'Disabled'}</span>
+                </div>
+              </div>
+
+              {/* Time Period Selector */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                {['24h', '7d', '30d'].map(period => (
+                  <button
+                    key={period}
+                    onClick={() => setOverviewNPTimePeriod(period)}
+                    style={{
+                      padding: '8px 16px',
+                      background: overviewNPTimePeriod === period ? '#3b82f6' : '#1a1d23',
+                      border: `1px solid ${overviewNPTimePeriod === period ? '#3b82f6' : '#2d333b'}`,
+                      borderRadius: '6px',
+                      color: overviewNPTimePeriod === period ? '#fff' : '#9ca3af',
+                      fontSize: '13px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
+                  >{period}</button>
+                ))}
+              </div>
+
+              {/* KPI Cards — Agent Scoped */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+                {(() => {
+                  const kpis = selectedAgentForOverviewNP.kpis[overviewNPTimePeriod];
+                  if (!kpis || kpis.totalRequests === 0) {
+                    return <div style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center', color: '#6b7280', fontSize: '13px' }}>No data for this time period</div>;
+                  }
+                  const items = [
+                    { label: 'Total Requests', value: kpis.totalRequests.toLocaleString(), change: kpis.changes.totalRequests },
+                    { label: 'Success Rate', value: `${kpis.successRate}%`, change: kpis.changes.successRate },
+                    { label: 'Avg Response Time', value: `${kpis.avgResponseTime}ms`, change: kpis.changes.avgResponseTime, invertColor: true },
+                    { label: 'Error Count', value: kpis.errorCount.toLocaleString(), change: kpis.changes.errorCount, invertColor: true },
+                  ];
+                  return items.map((item, idx) => {
+                    const isPositive = item.invertColor ? item.change < 0 : item.change > 0;
+                    return (
+                      <div key={idx} style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f' }}>
+                        <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 8px' }}>{item.label}</p>
+                        <p style={{ fontSize: '28px', fontWeight: 600, margin: '0 0 4px' }}>{item.value}</p>
+                        <p style={{ fontSize: '12px', color: isPositive ? '#22c55e' : '#ef4444', margin: 0 }}>
+                          {item.change > 0 ? '+' : ''}{item.change}% vs prev period
+                        </p>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+
+              {/* Request Volume Over Time — Agent Scoped */}
+              {selectedAgentForOverviewNP.requestVolume[overviewNPTimePeriod]?.length > 0 && (
+                <div style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>Request Volume Over Time</h3>
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                      {[{ label: 'Success', color: '#22c55e' }, { label: '4xx', color: '#eab308' }, { label: '5xx', color: '#ef4444' }].map(item => (
+                        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ width: '12px', height: '12px', background: item.color, borderRadius: '2px' }} />
+                          <span style={{ fontSize: '11px', color: '#9ca3af' }}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ height: '280px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={selectedAgentForOverviewNP.requestVolume[overviewNPTimePeriod]} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#23272f" />
+                        <XAxis dataKey="label" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={{ stroke: '#23272f' }} tickLine={false} />
+                        <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={{ stroke: '#23272f' }} tickLine={false} />
+                        <RechartsTooltip contentStyle={{ backgroundColor: '#1a1d23', border: '1px solid #23272f', borderRadius: '8px', color: '#e4e4e7', fontSize: '12px' }} />
+                        <Bar dataKey="success" name="Success" stackId="a" fill="#22c55e" />
+                        <Bar dataKey="error4xx" name="4xx" stackId="a" fill="#eab308" />
+                        <Bar dataKey="error5xx" name="5xx" stackId="a" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+
+              {/* Response Time Over Time — Line Chart */}
+              {selectedAgentForOverviewNP.responseTime[overviewNPTimePeriod]?.length > 0 && (
+                <div style={{ padding: '20px', background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>Response Time Over Time</h3>
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ width: '16px', height: '2px', background: '#3b82f6' }} />
+                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>Avg</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ width: '16px', height: '0', borderTop: '2px dashed #8b5cf6' }} />
+                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>P95</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ height: '280px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={selectedAgentForOverviewNP.responseTime[overviewNPTimePeriod]} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#23272f" />
+                        <XAxis dataKey="label" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={{ stroke: '#23272f' }} tickLine={false} />
+                        <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={{ stroke: '#23272f' }} tickLine={false} unit="ms" />
+                        <RechartsTooltip contentStyle={{ backgroundColor: '#1a1d23', border: '1px solid #23272f', borderRadius: '8px', color: '#e4e4e7', fontSize: '12px' }} />
+                        <Line type="monotone" dataKey="avg" name="Avg" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="p95" name="P95" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+
+              {/* Endpoint Usage Table */}
+              <div style={{ background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', overflow: 'hidden', marginBottom: '24px' }}>
+                <div style={{ padding: '20px 20px 0' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 16px' }}>Endpoint Usage</h3>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#1a1d23' }}>
+                      <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Endpoint</th>
+                      <th style={{ textAlign: 'right', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Call Count</th>
+                      <th style={{ textAlign: 'right', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Avg Response Time</th>
+                      <th style={{ textAlign: 'right', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Success Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedAgentForOverviewNP.endpointUsage.map((ep, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #1a1d23' }}>
+                        <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace' }}>{ep.endpoint}</td>
+                        <td style={{ textAlign: 'right', padding: '12px 16px', fontSize: '13px' }}>{ep.callCount.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right', padding: '12px 16px', fontSize: '13px', color: '#9ca3af' }}>{ep.avgResponseTime}</td>
+                        <td style={{ textAlign: 'right', padding: '12px 16px' }}>
+                          <span style={{
+                            padding: '2px 8px',
+                            borderRadius: '10px',
+                            fontSize: '11px',
+                            fontWeight: 500,
+                            background: ep.successRate >= 99 ? '#22c55e20' : '#eab30820',
+                            color: ep.successRate >= 99 ? '#22c55e' : '#eab308',
+                          }}>{ep.successRate}%</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Recent Errors Table — Agent Scoped */}
+              {selectedAgentForOverviewNP.recentErrors?.length > 0 && (
+                <div style={{ background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', overflow: 'hidden', marginBottom: '24px' }}>
+                  <div style={{ padding: '20px 20px 0' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 16px' }}>Recent Errors</h3>
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#1a1d23' }}>
+                        <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Timestamp</th>
+                        <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Endpoint</th>
+                        <th style={{ textAlign: 'center', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
+                        <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Error</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedAgentForOverviewNP.recentErrors.map((err, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #1a1d23' }}>
+                          <td style={{ padding: '10px 16px', fontSize: '12px', color: '#6b7280' }}>{err.timestamp}</td>
+                          <td style={{ padding: '10px 16px', fontSize: '12px', fontFamily: 'monospace', color: '#9ca3af' }}>{err.endpoint}</td>
+                          <td style={{ textAlign: 'center', padding: '10px 16px' }}>
+                            <span style={{
+                              padding: '2px 8px',
+                              borderRadius: '10px',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              background: err.statusCode >= 500 ? '#ef444420' : '#eab30820',
+                              color: err.statusCode >= 500 ? '#ef4444' : '#eab308',
+                            }}>{err.statusCode}</span>
+                          </td>
+                          <td style={{ padding: '10px 16px', fontSize: '12px', color: '#9ca3af' }}>{err.errorMessage}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* API Key Usage Table */}
+              <div style={{ background: '#13161b', borderRadius: '8px', border: '1px solid #23272f', overflow: 'hidden' }}>
+                <div style={{ padding: '20px 20px 0' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 16px' }}>API Key Usage</h3>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#1a1d23' }}>
+                      <th style={{ textAlign: 'left', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Key Name</th>
+                      <th style={{ textAlign: 'right', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Usage Count</th>
+                      <th style={{ textAlign: 'right', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Last Used</th>
+                      <th style={{ textAlign: 'center', padding: '10px 16px', fontSize: '11px', fontWeight: 500, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedAgentForOverviewNP.apiKeyUsage.map((key, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #1a1d23' }}>
+                        <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace' }}>{key.keyName}</td>
+                        <td style={{ textAlign: 'right', padding: '12px 16px', fontSize: '13px' }}>{key.usageCount.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right', padding: '12px 16px', fontSize: '12px', color: '#9ca3af' }}>{key.lastUsed}</td>
+                        <td style={{ textAlign: 'center', padding: '12px 16px' }}>
+                          <span style={{
+                            padding: '3px 10px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            background: key.status === 'active' ? '#22c55e20' : key.status === 'expired' ? '#eab30820' : '#ef444420',
+                            color: key.status === 'active' ? '#22c55e' : key.status === 'expired' ? '#eab308' : '#ef4444',
+                          }}>{key.status.charAt(0).toUpperCase() + key.status.slice(1)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </>
           )}
